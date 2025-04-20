@@ -3,12 +3,18 @@ const assert = require('assert');
 
 describe ('Search product by filter',function(){
     let driver;
-    it('Login to saucedemo',async function(){
+
+    before(async function () {
+        console.log('🔧 Setup sekali sebelum semua test...');
         driver = await new Builder().forBrowser('chrome').build();
         await driver.manage().window().maximize();
-        await driver.get('https://www.saucedemo.com/')
-        await driver.sleep(10000);
-        
+        await driver.manage().setTimeouts({ pageLoad: 10000, script: 10000 });
+        await driver.get('https://www.saucedemo.com/');
+      });
+
+    
+
+    it('Login to saucedemo',async function(){
         let inputusername = await driver.findElement(By.id('user-name'));
         let inputpassword = await driver.findElement(By.id('password'));
         let buttonlogin = await driver.findElement(By.id('login-button'));
@@ -21,7 +27,7 @@ describe ('Search product by filter',function(){
         assert.strictEqual(title, 'Swag Labs');
 
     })
-    it('FIlter prosucts',async function(){
+    it('FIlter products',async function(){
         let filter = await driver.findElement(By.className('product_sort_container'));
         await filter.click();
         await driver.sleep(1000);
@@ -33,6 +39,22 @@ describe ('Search product by filter',function(){
         assert.strictEqual(title, 'Swag Labs');
 
         await driver.sleep(1000);
-        await driver.quit();
     })
+    it('add to chart',async function(){
+        let addToCart = await driver.findElement(By.id('add-to-cart-test.allthethings()-t-shirt-(red)'));
+        await addToCart.click();
+        await driver.sleep(1000);
+        const title = await driver.getTitle();
+        assert.strictEqual(title, 'Swag Labs');
+    })
+    it('go to chart',async function(){
+        let chart = await driver.findElement(By.className('shopping_cart_link'));
+        await chart.click();
+        await driver.sleep(1000);
+        const title = await driver.getTitle();
+        assert.strictEqual(title, 'Swag Labs');
+    })
+    after(async function () {
+        await driver.quit();
+      });
 })
